@@ -11,8 +11,8 @@ class LocationService : Service() {
     private lateinit var locationProvider: LocationProvider
 
     private val locationListener = object : LocationProvider.Listener {
-        override fun onLocationResult(lat: Double, long: Double) {
-            Log.d(TAG, "New location: $lat / $long")
+        override fun onLocationResult(lat: Double, lon: Double) {
+            Log.d(TAG, "New location: $lat / $lon")
         }
     }
 

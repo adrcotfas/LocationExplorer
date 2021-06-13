@@ -8,6 +8,10 @@ import java.util.concurrent.TimeUnit
 
 class LocationProvider(context: Context, private val listener: Listener) {
 
+    interface Listener {
+        fun onLocationResult(lat: Double, lon: Double)
+    }
+
     private var fusedLocationProviderClient: FusedLocationProviderClient =
         LocationServices.getFusedLocationProviderClient(context)
 
@@ -21,14 +25,11 @@ class LocationProvider(context: Context, private val listener: Listener) {
         }
     }
 
-    interface Listener {
-        fun onLocationResult(lat: Double, long: Double)
-    }
-
     fun start() {
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 LocationRequest.create().apply {
+                    //TODO: adapt the values
                     interval = TimeUnit.SECONDS.toMillis(1) //60
                     fastestInterval = TimeUnit.SECONDS.toMillis(1) //30
                     maxWaitTime =
@@ -40,7 +41,7 @@ class LocationProvider(context: Context, private val listener: Listener) {
                 Looper.getMainLooper()
             )
         } catch (unlikely: SecurityException) {
-            Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
+            Log.e(TAG, "Lost location permissions. $unlikely")
         }
     }
 
@@ -57,7 +58,7 @@ class LocationProvider(context: Context, private val listener: Listener) {
                 }
             }
         } catch (unlikely: SecurityException) {
-            Log.e(TAG, "Lost location permissions. Couldn't remove updates. $unlikely")
+            Log.e(TAG, "Lost location permissions. $unlikely")
         }
     }
 

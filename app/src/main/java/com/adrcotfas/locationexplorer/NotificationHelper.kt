@@ -18,14 +18,14 @@ class NotificationHelper(context: Context) : ContextWrapper(context) {
         const val EXPLORER_NOTIFICATION_ID = 42
 
         fun buildNotification(context: Context): Notification {
-            val builder = getBasicNotificationBuilder(context)
+            val builder = getNotificationBuilder(context)
             val manager =
                 context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             manager.initIfNeeded()
             return builder.build()
         }
 
-        private fun getBasicNotificationBuilder(context: Context): NotificationCompat.Builder {
+        private fun getNotificationBuilder(context: Context): NotificationCompat.Builder {
             return NotificationCompat.Builder(context, EXPLORER_CHANNEL_ID)
                 .setContentText("Exploring the area...")
                 .setCategory(NotificationCompat.CATEGORY_PROGRESS)

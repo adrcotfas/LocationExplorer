@@ -96,7 +96,6 @@ class MainActivity : AppCompatActivity() {
             Snackbar.LENGTH_LONG
         )
             .setAction(R.string.settings) {
-                // Build intent that displays the App settings screen.
                 val intent = Intent()
                 intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
                 val uri = Uri.fromParts(
@@ -106,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 )
                 intent.data = uri
                 intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                // display the app settings screen
                 startActivity(intent)
             }
             .show()
