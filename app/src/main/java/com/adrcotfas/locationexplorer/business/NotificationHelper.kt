@@ -1,4 +1,4 @@
-package com.adrcotfas.locationexplorer
+package com.adrcotfas.locationexplorer.business
 
 import android.annotation.TargetApi
 import android.app.Notification
@@ -10,6 +10,8 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.os.Build
 import androidx.core.app.NotificationCompat
+import com.adrcotfas.locationexplorer.R
+import com.adrcotfas.locationexplorer.ui.MainActivity
 
 class NotificationHelper(context: Context) : ContextWrapper(context) {
 

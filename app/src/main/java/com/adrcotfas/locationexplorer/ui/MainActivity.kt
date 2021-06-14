@@ -1,4 +1,4 @@
-package com.adrcotfas.locationexplorer
+package com.adrcotfas.locationexplorer.ui
 
 import android.Manifest
 import android.content.Intent
@@ -11,15 +11,22 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.adrcotfas.locationexplorer.*
+import com.adrcotfas.locationexplorer.business.LocationService
 import com.adrcotfas.locationexplorer.databinding.ActivityMainBinding
 import com.google.android.material.snackbar.Snackbar
+import dagger.hilt.android.AndroidEntryPoint
 
 private const val LOCATION_PERMISSION_REQUEST_CODE = 11
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
+
+    private val photoAdapter = PhotoAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -41,6 +48,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupRecycler() {
+        binding.recycler.apply {
+            adapter = photoAdapter
+        }
+        binding.recycler.scrollToPosition(photoAdapter.data.size - 1)
+
+        viewModel.photoUrls.observe(this, {
+            photoAdapter.data = it
+            photoAdapter.notifyDataSetChanged()
+
+            for (i in it) {
+                Log.d(TAG, i.url)
+            }
+        })
     }
 
     private fun startLocationService() {

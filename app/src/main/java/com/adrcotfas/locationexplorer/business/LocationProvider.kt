@@ -1,12 +1,17 @@
-package com.adrcotfas.locationexplorer
+package com.adrcotfas.locationexplorer.business
 
 import android.content.Context
 import android.os.Looper
 import android.util.Log
 import com.google.android.gms.location.*
+import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 
-class LocationProvider(context: Context, private val listener: Listener) {
+/**
+ * Encapsulates all the location related logic.
+ */
+class LocationProvider @Inject constructor(@ApplicationContext context: Context, var listener: Listener) {
 
     interface Listener {
         fun onLocationResult(lat: Double, lon: Double)
@@ -25,17 +30,20 @@ class LocationProvider(context: Context, private val listener: Listener) {
         }
     }
 
+    /**
+     * Start listening for location updates. When a new location is received, notify the listener.
+     */
     fun start() {
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 LocationRequest.create().apply {
                     //TODO: adapt the values
-                    interval = TimeUnit.SECONDS.toMillis(1) //60
-                    fastestInterval = TimeUnit.SECONDS.toMillis(1) //30
+                    interval = TimeUnit.SECONDS.toMillis(10) //60
+                    fastestInterval = TimeUnit.SECONDS.toMillis(5) //30
                     maxWaitTime =
-                        TimeUnit.SECONDS.toMillis(1) // maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+                        TimeUnit.SECONDS.toMillis(10) // maxWaitTime = TimeUnit.MINUTES.toMillis(2)
                     priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                    //smallestDisplacement = 10f // meters
+                    smallestDisplacement = 100f // meters
                 },
                 locationCallback,
                 Looper.getMainLooper()
@@ -45,6 +53,9 @@ class LocationProvider(context: Context, private val listener: Listener) {
         }
     }
 
+    /**
+     * Stop listening for location updates.
+     */
     fun stop() {
         try {
             val removeTask =

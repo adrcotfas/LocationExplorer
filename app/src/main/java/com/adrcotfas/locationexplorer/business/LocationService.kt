@@ -1,24 +1,19 @@
-package com.adrcotfas.locationexplorer
+package com.adrcotfas.locationexplorer.business
 
 import android.app.Service
 import android.content.Intent
 import android.os.IBinder
-import android.util.Log
-import com.adrcotfas.locationexplorer.NotificationHelper.Companion.EXPLORER_NOTIFICATION_ID
+import com.adrcotfas.locationexplorer.START
+import com.adrcotfas.locationexplorer.STOP
+import com.adrcotfas.locationexplorer.business.NotificationHelper.Companion.EXPLORER_NOTIFICATION_ID
+import dagger.hilt.android.AndroidEntryPoint
+import javax.inject.Inject
 
+@AndroidEntryPoint
 class LocationService : Service() {
 
-    private lateinit var locationProvider: LocationProvider
-
-    private val locationListener = object : LocationProvider.Listener {
-        override fun onLocationResult(lat: Double, lon: Double) {
-            Log.d(TAG, "New location: $lat / $lon")
-        }
-    }
-
-    override fun onCreate() {
-        locationProvider = LocationProvider(this, locationListener)
-    }
+    @Inject
+    lateinit var locationProvider: LocationProvider
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val result = START_NOT_STICKY
@@ -39,8 +34,4 @@ class LocationService : Service() {
     }
 
     override fun onBind(intent: Intent?): IBinder? = null
-
-    companion object {
-        private const val TAG = "LocationService"
-    }
 }
