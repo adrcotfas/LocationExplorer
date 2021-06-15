@@ -8,6 +8,8 @@ import com.adrcotfas.locationexplorer.retrofit.getImageUrl
 import com.adrcotfas.locationexplorer.room.PhotoUrlDatabase
 import com.adrcotfas.locationexplorer.room.PhotoUrlEntity
 import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import java.lang.Exception
 import javax.inject.Inject
 
@@ -20,6 +22,12 @@ class PhotoManager @Inject constructor(
     private var currentLocation = Location("")
     private var closestPhotoIdDistance = Float.MAX_VALUE
     private var closestPhotoUrl = ""
+
+    /**
+     * Use a mutex to avoid concurrent access to the closest location processing operation
+     * in case of rapid location changes.
+     */
+    private val mutex = Mutex()
 
     /**
      * When a new location is received, fetch photos from that area.
@@ -39,18 +47,23 @@ class PhotoManager @Inject constructor(
         }
 
         CoroutineScope(Dispatchers.IO).launch {
-            try {
-                val photos = flickrApi.fetchPhotos(lat = lat.toString(), lon = lon.toString()).photos.photos
-                for (photo in photos) {
-                    processLocation(photo)
+            mutex.withLock {
+                try {
+                    val photos = flickrApi.fetchPhotos(
+                        lat = lat.toString(),
+                        lon = lon.toString()
+                    ).photos.photos
+                    for (photo in photos) {
+                        processLocation(photo)
+                    }
+                    if (closestPhotoUrl.isNotEmpty()) {
+                        Log.d(TAG, "Shortest distance: $closestPhotoIdDistance m")
+                        db.photoUrlDao().insert(PhotoUrlEntity(closestPhotoUrl))
+                    }
+                } catch (e: Exception) {
+                    //TODO: implement proper error handling
+                    Log.e(TAG, e.toString())
                 }
-                if (closestPhotoUrl.isNotEmpty()) {
-                    Log.d(TAG, "Shortest distance: $closestPhotoIdDistance m")
-                    db.photoUrlDao().insert(PhotoUrlEntity(closestPhotoUrl))
-                }
-            } catch (e: Exception) {
-                //TODO: implement proper error handling
-                Log.e(TAG, e.toString())
             }
         }
     }
