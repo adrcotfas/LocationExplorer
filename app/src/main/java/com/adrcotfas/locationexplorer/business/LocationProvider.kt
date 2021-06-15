@@ -37,13 +37,13 @@ class LocationProvider @Inject constructor(@ApplicationContext context: Context,
         try {
             fusedLocationProviderClient.requestLocationUpdates(
                 LocationRequest.create().apply {
-                    //TODO: adapt the values
-                    interval = TimeUnit.SECONDS.toMillis(10) //60
-                    fastestInterval = TimeUnit.SECONDS.toMillis(5) //30
+                    //TODO: use longer durations to save battery
+                    interval = TimeUnit.SECONDS.toMillis(10)
+                    fastestInterval = TimeUnit.SECONDS.toMillis(5)
                     maxWaitTime =
-                        TimeUnit.SECONDS.toMillis(10) // maxWaitTime = TimeUnit.MINUTES.toMillis(2)
+                        TimeUnit.SECONDS.toMillis(10)
                     priority = LocationRequest.PRIORITY_HIGH_ACCURACY
-                    smallestDisplacement = 100f // meters
+                    smallestDisplacement = 100f // [m]
                 },
                 locationCallback,
                 Looper.getMainLooper()
