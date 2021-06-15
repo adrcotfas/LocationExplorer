@@ -6,6 +6,7 @@ import android.os.IBinder
 import com.adrcotfas.locationexplorer.START
 import com.adrcotfas.locationexplorer.STOP
 import com.adrcotfas.locationexplorer.business.NotificationHelper.Companion.EXPLORER_NOTIFICATION_ID
+import com.adrcotfas.locationexplorer.room.PhotoUrlDatabase
 import dagger.hilt.android.AndroidEntryPoint
 import javax.inject.Inject
 
@@ -18,6 +19,9 @@ class LocationService : Service() {
 
     @Inject
     lateinit var locationProvider: LocationProvider
+
+    @Inject
+    lateinit var db: PhotoUrlDatabase
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val result = START_NOT_STICKY

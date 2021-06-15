@@ -5,7 +5,7 @@ import android.content.Context
 import androidx.room.Room
 import com.adrcotfas.locationexplorer.business.LocationProvider
 import com.adrcotfas.locationexplorer.retrofit.FlickrApi
-import com.adrcotfas.locationexplorer.business.PhotoManager
+import com.adrcotfas.locationexplorer.business.PhotoUrlManager
 import com.adrcotfas.locationexplorer.room.PhotoUrlDatabase
 import dagger.Module
 import dagger.Provides
@@ -41,10 +41,10 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun providePhotoManager(flickrApi: FlickrApi, db: PhotoUrlDatabase) = PhotoManager(flickrApi, db)
+    fun providePhotoManager(flickrApi: FlickrApi, db: PhotoUrlDatabase) = PhotoUrlManager(flickrApi, db)
 
     @Provides
     @Singleton
-    fun provideLocationProvider(@ApplicationContext appContext: Context, listener: PhotoManager) =
+    fun provideLocationProvider(@ApplicationContext appContext: Context, listener: PhotoUrlManager) =
         LocationProvider(appContext, listener)
 }

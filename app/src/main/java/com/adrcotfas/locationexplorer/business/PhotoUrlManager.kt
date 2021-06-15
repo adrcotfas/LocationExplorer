@@ -13,7 +13,7 @@ import kotlinx.coroutines.sync.withLock
 import java.lang.Exception
 import javax.inject.Inject
 
-class PhotoManager @Inject constructor(
+class PhotoUrlManager @Inject constructor(
     private val flickrApi: FlickrApi,
     private val db: PhotoUrlDatabase
 ) :
@@ -37,18 +37,14 @@ class PhotoManager @Inject constructor(
      */
     override fun onLocationResult(lat: Double, lon: Double) {
         Log.d(TAG, "New location: $lat / $lon")
-
-        closestPhotoIdDistance = Float.MAX_VALUE
-        closestPhotoUrl = ""
-
-        currentLocation.apply {
-            latitude = lat
-            longitude = lon
-        }
-
         CoroutineScope(Dispatchers.IO).launch {
             mutex.withLock {
                 try {
+                    currentLocation.apply {
+                        latitude = lat
+                        longitude = lon
+                    }
+
                     val photos = flickrApi.fetchPhotos(
                         lat = lat.toString(),
                         lon = lon.toString()
@@ -60,6 +56,9 @@ class PhotoManager @Inject constructor(
                         Log.d(TAG, "Shortest distance: $closestPhotoIdDistance m")
                         db.photoUrlDao().insert(PhotoUrlEntity(closestPhotoUrl))
                     }
+
+                    closestPhotoIdDistance = Float.MAX_VALUE
+                    closestPhotoUrl = ""
                 } catch (e: Exception) {
                     //TODO: implement proper error handling
                     Log.e(TAG, e.toString())

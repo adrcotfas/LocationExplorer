@@ -44,6 +44,11 @@ class MainActivity : AppCompatActivity() {
 
             startLocationService()
         }
+        // using this for easier debugging
+        binding.button.setOnLongClickListener{
+            viewModel.clearPhotos()
+            true
+        }
     }
 
     private fun updateButtonState() {
