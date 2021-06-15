@@ -11,7 +11,6 @@ import android.util.Log
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.adrcotfas.locationexplorer.*
 import com.adrcotfas.locationexplorer.business.LocationService
 import com.adrcotfas.locationexplorer.databinding.ActivityMainBinding
@@ -25,7 +24,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
     private val viewModel: MainViewModel by viewModels()
-
     private val photoAdapter = PhotoAdapter()
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,33 +37,33 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupButton() {
+        updateButtonState()
         binding.button.setOnClickListener {
-            viewModel.isRunning = !viewModel.isRunning
-            binding.button.text =
-                resources.getString(if (viewModel.isRunning) R.string.stop else R.string.start)
+            LocationService.isRunning = !LocationService.isRunning
+            updateButtonState()
+
             startLocationService()
         }
+    }
+
+    private fun updateButtonState() {
+        binding.button.text =
+            resources.getString(if (LocationService.isRunning) R.string.stop else R.string.start)
     }
 
     private fun setupRecycler() {
         binding.recycler.apply {
             adapter = photoAdapter
         }
-        binding.recycler.scrollToPosition(photoAdapter.data.size - 1)
-
         viewModel.photoUrls.observe(this, {
             photoAdapter.data = it
             photoAdapter.notifyDataSetChanged()
-
-            for (i in it) {
-                Log.d(TAG, i.url)
-            }
         })
     }
 
     private fun startLocationService() {
         val intent = Intent(this, LocationService::class.java)
-        intent.action = if (viewModel.isRunning) START else STOP
+        intent.action = if (LocationService.isRunning) START else STOP
         ContextCompat.startForegroundService(this, intent)
     }
 

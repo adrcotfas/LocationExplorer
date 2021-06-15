@@ -12,6 +12,10 @@ import javax.inject.Inject
 @AndroidEntryPoint
 class LocationService : Service() {
 
+    companion object {
+        var isRunning = false
+    }
+
     @Inject
     lateinit var locationProvider: LocationProvider
 
@@ -24,10 +28,12 @@ class LocationService : Service() {
                     NotificationHelper.buildNotification(this)
                 )
                 locationProvider.start()
+                isRunning = true
             }
             STOP -> {
                 locationProvider.stop()
                 stopSelf()
+                isRunning = false
             }
         }
         return result
